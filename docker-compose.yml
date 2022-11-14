@@ -1,0 +1,25 @@
+version: '3.3'
+
+services:
+
+  web:
+    build: ./web
+    ports:
+      - "8000:8000"
+    restart: always
+    volumes:
+      - ./web:/core
+    depends_on:
+      - db
+    command: uvicorn app.main:app --host ${BACK_HOST} --port ${BACK_PORT} --reload
+
+  db:
+    image: postgres
+    volumes:
+      - ./database-/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=${PG_PASS}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_DB=${PG_DB}
