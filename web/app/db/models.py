@@ -12,6 +12,7 @@ class UserBase(SQLModel):
 class UserCreate(UserBase):
     password1: str
     password2: str
+    is_staff: bool
 
     @validator('password2')
     def passwords_match(cls, v, values):
