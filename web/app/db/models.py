@@ -1,10 +1,11 @@
 from sqlmodel import SQLModel, Field
-from pydantic import validator
+from pydantic import validator, EmailStr
 from ..users.exceptions import PasswordsDontMatch
+from typing import Optional
 
 
 class UserBase(SQLModel):
-    email: str = Field(unique=True, index=True)
+    email: EmailStr = Field(unique=True, index=True)
     username: str = Field(unique=True, index=True)
 
 
@@ -20,7 +21,27 @@ class UserCreate(UserBase):
         return v
 
 
+class UserUpdate(SQLModel):
+    username: Optional[str]
+    password1: Optional[str]
+    password2: Optional[str]
+
+    @validator('password2')
+    def passwords_match(cls, v, values):
+        print(values)
+        if 'password1' in values and v != values['password1']:
+            raise PasswordsDontMatch
+        return v
+
+
 class User(UserBase, table=True):
     id: int = Field(primary_key=True, index=True)
     password: str
 
+
+class SongBase(SQLModel):
+    title: str
+
+
+class Song(SongBase, table=True):
+    id: int = Field(primary_key=True, index=True)
