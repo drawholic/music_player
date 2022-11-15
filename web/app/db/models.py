@@ -37,6 +37,8 @@ class UserUpdate(SQLModel):
 class User(UserBase, table=True):
     id: int = Field(primary_key=True, index=True)
     password: str
+    is_active: bool = Field(default=True)
+    is_staff: bool = Field(default=False)
 
 
 class SongBase(SQLModel):

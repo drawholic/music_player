@@ -39,3 +39,23 @@ async def update_user(user: UserUpdate,
     email = Auth.decode(token)
     return await UserCrud(db).update_user(user_email=email, user_data=user)
 
+
+@router.delete('/delete_user')
+async def delete_user(user_email: str,
+                      token: str = Depends(token_scheme),
+                      db: AsyncSession = Depends(get_session)):
+    email = Auth.decode(token)
+    curr_user = await UserCrud(db).get_user_by_email(email=email)
+    if curr_user.is_staff:
+        await UserCrud(db).delete_user(user_email=user_email)
+
+
+@router.delete('/disable')
+async def disable_user(user_email: str,
+                       token: str = Depends(token_scheme),
+                       db: AsyncSession = Depends(get_session)):
+    email = Auth.decode(token)
+    curr_user = await UserCrud(db).get_user_by_email(email=email)
+    if curr_user.is_staff or curr_user.email == user_email:
+        await UserCrud(db).disable_user(user_email=user_email)
+
